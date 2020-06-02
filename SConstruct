@@ -62,10 +62,12 @@ elif platform_arg == "javascript":
     custom_tools = ["cc", "c++", "ar", "link", "textfile", "zip"]
 
 env_base = Environment(tools=custom_tools)
-if "TERM" in os.environ:
-    env_base["ENV"]["TERM"] = os.environ["TERM"]
-env_base.AppendENVPath("PATH", os.getenv("PATH"))
-env_base.AppendENVPath("PKG_CONFIG_PATH", os.getenv("PKG_CONFIG_PATH"))
+env_base.Tool('ninja')
+
+if 'TERM' in os.environ:
+    env_base['ENV']['TERM'] = os.environ['TERM']
+env_base.AppendENVPath('PATH', os.getenv('PATH'))
+env_base.AppendENVPath('PKG_CONFIG_PATH', os.getenv('PKG_CONFIG_PATH'))
 env_base.disabled_modules = []
 env_base.use_ptrcall = False
 env_base.module_version_string = ""
@@ -294,18 +296,10 @@ if selected_platform in platform_list:
     else:
         env = env_base.Clone()
 
-    # Compilation DB requires SCons 3.1.1+.
-    from SCons import __version__ as scons_raw_version
-
-    scons_ver = env._get_major_minor_revision(scons_raw_version)
-    if scons_ver >= (3, 1, 1):
-        env.Tool("compilation_db", toolpath=["misc/scons"])
-        env.Alias("compiledb", env.CompilationDatabase("compile_commands.json"))
-
-    if env["dev"]:
-        env["verbose"] = True
-        env["warnings"] = "extra"
-        env["werror"] = True
+    if env['dev']:
+        env['verbose'] = True
+        env['warnings'] = "extra"
+        env['werror'] = True
 
     if env["vsproj"]:
         env.vs_incs = []
