@@ -35,7 +35,6 @@
 #include "scene/resources/animation.h"
 #include "scene/resources/mesh.h"
 #include "scene/resources/shape_3d.h"
-#include "scene/3d/mesh_instance_3d.h"
 
 class Material;
 
@@ -122,24 +121,6 @@ class ResourceImporterScene : public ResourceImporter {
 	void _replace_owner(Node *p_node, Node *p_scene, Node *p_new_owner);
 
 public:
-	struct RestBone {
-		NodePath path;
-		Transform rest_local_before;
-		Transform rest_local_after;
-		Quat rest_delta;
-		Vector3 children_centroid_direction;
-		int parent_index;
-		Vector<int> children;
-	};
-
-private:
-	void _fix_meshes(Map<int, ResourceImporterScene::RestBone> &r_rest_bones, Vector<MeshInstance3D *> p_meshes);
-	void _fix_skeleton(Skeleton3D *p_skeleton, Map<int, ResourceImporterScene::RestBone> &r_rest_bones);
-	Transform get_bone_global_transform(int p_id, Skeleton3D *p_skeleton, Vector<Vector<Transform> > p_local_transform_array);
-	void _align_animations(Node *scene, const Map<int, RestBone> &p_rest_bones);
-	void _skeleton_point_to_children(Node *p_scene);
-
-public:
 	static ResourceImporterScene *get_singleton() { return singleton; }
 
 	const Set<Ref<EditorSceneImporter>> &get_importers() const { return importers; }
@@ -165,9 +146,6 @@ public:
 	void _make_external_resources(Node *p_node, const String &p_base_path, bool p_make_animations, bool p_animations_as_text, bool p_keep_animations, bool p_make_materials, bool p_materials_as_text, bool p_keep_materials, bool p_make_meshes, bool p_meshes_as_text, Map<Ref<Animation>, Ref<Animation>> &p_animations, Map<Ref<Material>, Ref<Material>> &p_materials, Map<Ref<ArrayMesh>, Ref<ArrayMesh>> &p_meshes);
 
 	Node *_fix_node(Node *p_node, Node *p_root, Map<Ref<Mesh>, List<Ref<Shape3D>>> &collision_map, LightBakeMode p_light_bake_mode);
-
-	Vector3 _get_perpendicular_vector(Vector3 v);
-	Quat _align_vectors(Vector3 a, Vector3 b);
 
 	void _create_clips(Node *scene, const Array &p_clips, bool p_bake_all);
 	void _filter_anim_tracks(Ref<Animation> anim, Set<String> &keep);
