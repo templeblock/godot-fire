@@ -277,6 +277,16 @@ Transform Node3D::get_global_transform() const {
 	return data.global_transform;
 }
 
+Quat Node3D::get_rotation_quat() const {
+	return data.local_transform.basis.get_rotation_quat();
+}
+
+void Node3D::set_rotation_quat(const Quat &p_quat) {
+	Transform xform = get_transform();
+	xform.basis.set_quat_scale(p_quat, get_scale());
+	set_transform(xform);
+}
+
 #ifdef TOOLS_ENABLED
 Transform Node3D::get_global_gizmo_transform() const {
 	return get_global_transform();
@@ -710,8 +720,8 @@ void Node3D::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_rotation_degrees", "euler_degrees"), &Node3D::set_rotation_degrees);
 	ClassDB::bind_method(D_METHOD("get_rotation_degrees"), &Node3D::get_rotation_degrees);
 	ClassDB::bind_method(D_METHOD("set_scale", "scale"), &Node3D::set_scale);
-	ClassDB::bind_method(D_METHOD("get_scale"), &Node3D::get_scale);
-	ClassDB::bind_method(D_METHOD("set_global_transform", "global"), &Node3D::set_global_transform);
+	ClassDB::bind_method(D_METHOD("set_rotation_quat", "quat"), &Node3D::set_rotation_quat);
+	ClassDB::bind_method(D_METHOD("get_rotation_quat"), &Node3D::get_rotation_quat);
 	ClassDB::bind_method(D_METHOD("get_global_transform"), &Node3D::get_global_transform);
 	ClassDB::bind_method(D_METHOD("get_parent_spatial"), &Node3D::get_parent_spatial);
 	ClassDB::bind_method(D_METHOD("set_ignore_transform_notification", "enabled"), &Node3D::set_ignore_transform_notification);
@@ -771,6 +781,7 @@ void Node3D::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::TRANSFORM, "global_transform", PROPERTY_HINT_NONE, "", 0), "set_global_transform", "get_global_transform");
 	ADD_PROPERTY(PropertyInfo(Variant::VECTOR3, "translation", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EDITOR), "set_translation", "get_translation");
 	ADD_PROPERTY(PropertyInfo(Variant::VECTOR3, "rotation_degrees", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EDITOR), "set_rotation_degrees", "get_rotation_degrees");
+	ADD_PROPERTY(PropertyInfo(Variant::QUAT, "rotation_quat", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EDITOR), "set_rotation_quat", "get_rotation_quat");
 	ADD_PROPERTY(PropertyInfo(Variant::VECTOR3, "rotation", PROPERTY_HINT_NONE, "", 0), "set_rotation", "get_rotation");
 	ADD_PROPERTY(PropertyInfo(Variant::VECTOR3, "scale", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EDITOR), "set_scale", "get_scale");
 	ADD_GROUP("Matrix", "");
